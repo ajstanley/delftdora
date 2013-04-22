@@ -14,7 +14,7 @@ function delftdora_menu() {
       'title' => 'Delft Customizations',
       'description' => 'Configure behviours specific to Delft.',
       'page callback' => 'drupal_get_form',
-      'access arguments' => array('administer site configuration'),
+          'access arguments' => array('administer site configuration'),
       'page arguments' => array('delft_admin'),
       'file' => 'includes/admin.form.inc',
       'type' => MENU_NORMAL_ITEM,
@@ -91,6 +91,12 @@ function delftdora_islandora_xml_form_builder_forms() {
   );
 }
 
+
+/**
+ * Implements hook_xml_form_builder_associations().
+ *
+ * @return array
+ */
 function delftdora_xml_form_builder_form_associations() {
   return array(
     'model_Organization' => array(
@@ -237,12 +243,16 @@ function delftdora_cron() {
             ->condition('ingested_pid', $pid)
             ->execute();
   }
+  watchdog('delftdora', '@deleted Pids processed by cron job', array('@deleted' => $num_deleted));
 }
 
+/**
+ * Creates directive file from pid, then calls fedora_modify batch script
+ * @param string $pid
+ */
 function delftdora_batch_modify($pid) {
   $fedora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
   $fedora_disseminator = "$fedora_url/objects/$pid/methods/sdef:makeBM";
-  $fedora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
   $path_parts = parse_url($fedora_url);
   $host = $path_parts['host'] . ':' . $path_parts['port'];
   $delft_temp_dir = 'delft_input';
