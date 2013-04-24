@@ -55,7 +55,14 @@ function delftdora_uninstall() {
  * @return string
  */
 function delftdora_update_7001(&$sandbox) {
-  drupal_install_schema('delftdora');
+
+
+  try {
+    drupal_install_schema('delftdora');
+  }
+  catch (DatabaseSchemaObjectExistsException $e) {
+    watchdog('delftdora', t('Schema already installed'));
+  }
   $t = get_t();
   return $t("Delft database updates complete");
 }
